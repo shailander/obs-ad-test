@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import LogoImg from "../../public/logo.png";
+import LogoImg from "../../public/logo-white.png";
 
 const TIME_TILL_SHOW = 15000; //show=true
 const TIME_TILL_HIDE = 45000; //show=false
@@ -7,7 +7,6 @@ const TIME_TILL_HIDE = 45000; //show=false
 export default function Home() {
   const isVisible = useRef(true);
   const [showLogo, setShowLogo] = useState(false);
-  const timer = useRef(0);
 
   useEffect(() => {
     const isObsPresent = !!window?.obsstudio?.pluginVersion;
@@ -61,18 +60,24 @@ export default function Home() {
   }, [showLogo]);
 
   const sendData = async () => {
+    const currentTimestamp = new Date();
+    var timestampValue = currentTimestamp
+      .toISOString()
+      .slice(0, 19)
+      .replace("T", " ");
     await fetch("/api/hello", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        timestamp: timestampValue,
         isVisible: isVisible.current,
       }),
     });
   };
   return (
-    <div className="h-screen w-screen bg-transparent text-2xl flex justify-start items-end p-4">
+    <div className="h-screen w-screen bg-transparent text-2xl flex justify-start items-center p-4">
       <img
         src={LogoImg.src}
         alt="logo"
@@ -80,7 +85,7 @@ export default function Home() {
         width={200}
         className={`${
           showLogo ? "opacity-100" : "opacity-0"
-        } transition-opacity`}
+        } transition-opacity ease-in-out duration-1000 bg-black`}
       />
     </div>
   );
