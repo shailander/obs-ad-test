@@ -15,7 +15,7 @@ export default function Home() {
     const intervalId = isObsPresent
       ? setInterval(() => {
           sendData();
-        }, 5000)
+        }, 60000)
       : null;
 
     isVisible.current = isObsPresent;
