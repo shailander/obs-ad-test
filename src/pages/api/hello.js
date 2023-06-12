@@ -3,7 +3,7 @@
 require("dotenv").config();
 const mysql = require("mysql2");
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method === "POST") {
     // Access the data sent in the request body
     const { timestamp, isVisible } = req.body;
@@ -15,14 +15,18 @@ export default function handler(req, res) {
     // Perform any necessary processing or validations here
     try {
       const connection = mysql.createConnection(process.env.DATABASE_URL);
-      connection.query(insertQuery, values, (error, results) => {
-        if (error) {
-          console.error("Error executing query:", error);
-          // Handle the error response
-        } else {
-          console.log("Insert successful", results);
-          // Handle the success response
-        }
+      await new Promise((res, rej) => {
+        connection.query(insertQuery, values, (error, results) => {
+          if (error) {
+            rej("NO");
+            console.error("Error executing query:", error);
+            // Handle the error response
+          } else {
+            res("Yes");
+            console.log("Insert successful", results);
+            // Handle the success response
+          }
+        });
       });
       connection.end();
     } catch (err) {
