@@ -2,7 +2,6 @@
 
 require("dotenv").config();
 const mysql = require("mysql2");
-const connection = mysql.createConnection(process.env.DATABASE_URL);
 
 export default function handler(req, res) {
   if (req.method === "POST") {
@@ -13,6 +12,7 @@ export default function handler(req, res) {
     const insertQuery = "INSERT INTO test (timestamp,isVisible) VALUES (?,?)";
     const values = [timestamp, isVisible];
 
+    const connection = mysql.createConnection(process.env.DATABASE_URL);
     // Perform any necessary processing or validations here
     connection.query(insertQuery, values, (error, results) => {
       if (error) {
@@ -23,7 +23,7 @@ export default function handler(req, res) {
         // Handle the success response
       }
     });
-    // connection.end();
+    connection.end();
 
     // Return a JSON response with the data
     res
