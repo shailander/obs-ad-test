@@ -5,8 +5,6 @@ const mysql = require("mysql2");
 
 export default function handler(req, res) {
   if (req.method === "POST") {
-    const connection = mysql.createConnection(process.env.DATABASE_URL);
-
     // Access the data sent in the request body
     const { timestamp, isVisible } = req.body;
     console.log(timestamp, isVisible, "isVisible");
@@ -15,16 +13,21 @@ export default function handler(req, res) {
     const values = [timestamp, isVisible];
 
     // Perform any necessary processing or validations here
-    connection.query(insertQuery, values, (error, results) => {
-      if (error) {
-        console.error("Error executing query:", error);
-        // Handle the error response
-      } else {
-        console.log("Insert successful", results);
-        // Handle the success response
-      }
-    });
-    connection.end();
+    try {
+      const connection = mysql.createConnection(process.env.DATABASE_URL);
+      connection.query(insertQuery, values, (error, results) => {
+        if (error) {
+          console.error("Error executing query:", error);
+          // Handle the error response
+        } else {
+          console.log("Insert successful", results);
+          // Handle the success response
+        }
+      });
+      connection.end();
+    } catch (err) {
+      console.log("Failed insertion");
+    }
 
     // Return a JSON response with the data
     res
