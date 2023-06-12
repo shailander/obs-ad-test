@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
 require("dotenv").config();
-const mysql = require("mysql2");
+const mysql = require("mysql2/promise");
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
@@ -14,20 +14,17 @@ export default async function handler(req, res) {
 
     // Perform any necessary processing or validations here
     try {
-      const connection = mysql.createConnection(process.env.DATABASE_URL);
-      await new Promise((res, rej) => {
-        connection.query(insertQuery, values, (error, results) => {
-          if (error) {
-            rej("NO");
-            console.error("Error executing query:", error);
-            // Handle the error response
-          } else {
-            res("Yes");
-            console.log("Insert successful", results);
-            // Handle the success response
-          }
-        });
+      const connection = await mysql.createConnection(process.env.DATABASE_URL);
+      await connection.query(insertQuery, values, (error, results) => {
+        if (error) {
+          console.error("Error executing query:", error);
+          // Handle the error response
+        } else {
+          console.log("Insert successful", results);
+          // Handle the success response
+        }
       });
+
       connection.end();
     } catch (err) {
       console.log("Failed insertion");

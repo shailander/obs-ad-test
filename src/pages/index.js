@@ -11,10 +11,10 @@ export default function Home() {
   useEffect(() => {
     const isObsPresent = !!window?.obsstudio?.pluginVersion;
 
-    const intervalId = true
+    const intervalId = isObsPresent
       ? setInterval(() => {
           sendData();
-        }, 15000)
+        }, 60000)
       : null;
 
     isVisible.current = isObsPresent;
