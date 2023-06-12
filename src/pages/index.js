@@ -11,7 +11,7 @@ export default function Home() {
   useEffect(() => {
     const isObsPresent = !!window?.obsstudio?.pluginVersion;
 
-    const intervalId = isObsPresent
+    const intervalId = true
       ? setInterval(() => {
           sendData();
         }, 60000)
