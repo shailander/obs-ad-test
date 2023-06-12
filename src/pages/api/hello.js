@@ -2,10 +2,11 @@
 
 require("dotenv").config();
 const mysql = require("mysql2");
-const connection = mysql.createConnection(process.env.DATABASE_URL);
 
 export default function handler(req, res) {
   if (req.method === "POST") {
+    const connection = mysql.createConnection(process.env.DATABASE_URL);
+
     // Access the data sent in the request body
     const { timestamp, isVisible } = req.body;
     console.log(timestamp, isVisible, "isVisible");
@@ -23,7 +24,7 @@ export default function handler(req, res) {
         // Handle the success response
       }
     });
-    // connection.end();
+    connection.end();
 
     // Return a JSON response with the data
     res
