@@ -1,19 +1,31 @@
 import { useEffect, useRef, useState } from "react";
-import LogoImg from "../../public/logo-white.png";
+import LogoImg from "../../../public/logo-white.png";
+import { useRouter } from "next/router";
 
 const TIME_TILL_SHOW = 15000; //show=true
 const TIME_TILL_HIDE = 45000; //show=false
+
+const allowedStreamers = ["1", "2", "3"];
 
 export default function Home() {
   const isVisible = useRef(true);
   const [showLogo, setShowLogo] = useState(false);
 
+  const router = useRouter();
+
   useEffect(() => {
+    const { id: streamerId } = router.query;
+    if (!streamerId) return;
+
+    if (!allowedStreamers.includes(streamerId)) return;
+
+    const streamerTableName = "streamer_" + streamerId;
+
     const isObsPresent = !!window?.obsstudio?.pluginVersion;
 
     const intervalId = isObsPresent
       ? setInterval(() => {
-          sendData();
+          sendData(streamerTableName);
         }, 60000)
       : null;
 
@@ -40,7 +52,7 @@ export default function Home() {
         clearInterval(intervalId);
       }
     };
-  }, []);
+  }, [router.query]);
 
   useEffect(() => {
     let timerId;
@@ -59,7 +71,7 @@ export default function Home() {
     };
   }, [showLogo]);
 
-  const sendData = async () => {
+  const sendData = async (streamerTableName) => {
     const currentTimestamp = new Date();
     var timestampValue = currentTimestamp
       .toISOString()
@@ -73,7 +85,7 @@ export default function Home() {
       body: JSON.stringify({
         timestamp: timestampValue,
         isVisible: isVisible.current,
-        streamerTableName: "test",
+        streamerTableName,
       }),
     });
   };

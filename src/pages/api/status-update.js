@@ -6,10 +6,9 @@ const mysql = require("mysql2/promise");
 export default async function handler(req, res) {
   if (req.method === "POST") {
     // Access the data sent in the request body
-    const { timestamp, isVisible } = req.body;
-    console.log(timestamp, isVisible, "isVisible");
+    const { timestamp, isVisible, streamerTableName } = req.body;
 
-    const insertQuery = "INSERT INTO test (timestamp,isVisible) VALUES (?,?)";
+    const insertQuery = `INSERT INTO ${streamerTableName} (timestamp,isVisible) VALUES (?,?)`;
     const values = [timestamp, isVisible];
 
     // Perform any necessary processing or validations here
