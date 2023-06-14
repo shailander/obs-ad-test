@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useEffect, useRef, useState } from "react";
 import LogoImg from "../../../public/logo-white.png";
 import { useRouter } from "next/router";
@@ -9,6 +10,7 @@ const allowedStreamers = ["1", "2", "3"];
 
 export default function Home() {
   const isVisible = useRef(true);
+  const isStreaming = useRef(false);
   const [showLogo, setShowLogo] = useState(false);
 
   const router = useRouter();
@@ -30,24 +32,30 @@ export default function Home() {
       : null;
 
     isVisible.current = isObsPresent;
-
-    // const ele = document.getElementById("damm-element");
-    // window.addEventListener("obsSourceVisibleChanged", function (event) {
-    //   ele.innerText = `Visible : ${event.detail.visible} ** Active : ${data.current.active}`;
-    //   data.current = { ...data.current, visible: event.detail.visible };
-    // });
-    window.addEventListener("obsSourceActiveChanged", function (event) {
-      // ele.innerText = `Visible : ${data.current.visible} ** Active : ${event.detail.active}`;
-      isVisible.current = !!event.detail.active;
+    window?.obsstudio?.getStatus((status) => {
+      isStreaming.current = status.streaming;
     });
 
-    // window.obsstudio.onVisibilityChange
-
-    // setTimeout(() => {
-    //   data.current = Math.random(1, 100);
-    // }, 1000);
+    function onObsSourceActiveChanged(event) {
+      isVisible.current = !!event.detail.active;
+    }
+    function obsStreamingStarted() {
+      isStreaming.current = true;
+    }
+    function obsStreamingStopped() {
+      isStreaming.current = false;
+    }
+    window.addEventListener("obsSourceActiveChanged", onObsSourceActiveChanged);
+    window.addEventListener("obsStreamingStarted", obsStreamingStarted);
+    window.addEventListener("obsStreamingStopped", obsStreamingStopped);
 
     return () => {
+      window.removeEventListener(
+        "obsSourceActiveChanged",
+        onObsSourceActiveChanged
+      );
+      window.removeEventListener("obsStreamingStarted", obsStreamingStarted);
+      window.removeEventListener("obsStreamingStopped", obsStreamingStopped);
       if (intervalId) {
         clearInterval(intervalId);
       }
@@ -72,6 +80,7 @@ export default function Home() {
   }, [showLogo]);
 
   const sendData = async (streamerTableName) => {
+    if (!isStreaming.current) return;
     const currentTimestamp = new Date();
     var timestampValue = currentTimestamp
       .toISOString()
@@ -89,6 +98,7 @@ export default function Home() {
       }),
     });
   };
+
   return (
     <div className="h-screen w-screen bg-transparent text-2xl flex justify-start items-center p-4">
       <img
