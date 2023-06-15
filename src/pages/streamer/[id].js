@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import LogoImg from "../../../public/logo-white.png";
 import { useRouter } from "next/router";
 
-const TIME_TILL_SHOW = 5000; //show=true
-const TIME_TILL_HIDE = 5000; //show=false
+const TIME_TILL_SHOW = 15000; //show=true
+const TIME_TILL_HIDE = 45000; //show=false
 
 const allowedStreamers = ["1", "2", "3"];
 
