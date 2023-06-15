@@ -9,7 +9,7 @@ const TIME_TILL_HIDE = 45000; //show=false
 const allowedStreamers = ["1", "2", "3"];
 
 export default function Home() {
-  const isVisible = useRef(true);
+  const isObsSourceActive = useRef(true);
   const isStreaming = useRef(false);
   const [showLogo, setShowLogo] = useState(false);
 
@@ -31,13 +31,13 @@ export default function Home() {
         }, 60000)
       : null;
 
-    isVisible.current = isObsPresent;
+    isObsSourceActive.current = isObsPresent;
     window?.obsstudio?.getStatus((status) => {
       isStreaming.current = status.streaming;
     });
 
     function onObsSourceActiveChanged(event) {
-      isVisible.current = !!event.detail.active;
+      isObsSourceActive.current = !!event.detail.active;
     }
     function obsStreamingStarted() {
       isStreaming.current = true;
@@ -93,7 +93,7 @@ export default function Home() {
       },
       body: JSON.stringify({
         timestamp: timestampValue,
-        isVisible: isVisible.current,
+        isActive: isObsSourceActive.current,
         streamerTableName,
       }),
     });
