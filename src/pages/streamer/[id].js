@@ -28,7 +28,7 @@ export default function Home() {
     const intervalId = isObsPresent
       ? setInterval(() => {
           sendData(streamerTableName);
-        }, 10000)
+        }, 60000)
       : null;
 
     isObsSourceActive.current = isObsPresent;
